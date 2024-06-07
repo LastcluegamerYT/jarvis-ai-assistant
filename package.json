@@ -1,12 +1,12 @@
 {
   "name": "jarvis-ai-assistant",
   "version": "1.0.0",
-  "description": "An AI assistant that responds to user inputs.",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node server.js",
+    "vercel-build": "echo 'Build step not required for Node.js'"
   },
   "dependencies": {
-    "express": "^4.17.1"
+    "fastify": "^3.0.0"
   }
 }
