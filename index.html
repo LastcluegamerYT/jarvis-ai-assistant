@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jarvis The Best AI</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <font size="5"> <p>Jarvis The Best AI</p> </font>
+            <strong><b> <h1> powered by prashant</h1></b></strong>
+            <div id="time"></div>
+        </div>
+
+        <div class="chat-box" id="chat-box">
+            <div class="message bot">
+                <div class="text">Welcome to Jarvis AI, the most advanced AI developed by Prashant Pandey. Start typing to interact with me!</div>
+            </div>
+        </div>
+
+        <div class="input-box">
+            <input type="text" id="user_input" placeholder="Type your message here..." onkeypress="handleKeyPress(event)">
+            <button onclick="submitQuestion()">Send</button>
+        </div>
+
+        <button class="pulse-button" id="pause-button" onclick="stopMusic()">⏸️</button>
+    </div>
+
+    <script>
+        async function submitQuestion() {
+            const input = document.getElementById('user_input');
+            const message = input.value.trim();
+
+            if (message) {
+                appendMessage('user', message);
+                input.value = '';
+                showTypingIndicator();
+
+                try {
+                    const response = await fetch('https://prashantytt34.pythonanywhere.com/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ user_input: message })
+                    });
+                    const data = await response.json();
+
+                    hideTypingIndicator();
+                    appendMessage('bot', data.response || "Sorry, I didn't understand that.");
+
+                    if (data.musicFile) {
+                        playMusic(data.musicFile);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    hideTypingIndicator();
+                    appendMessage('bot', "Sar, network nai hau check kar mc.\nfir sa try kar nai ta gand maro 69 pose me.");
+                }
+            }
+        }
+    </script>
+    <script src="scripts.js"></script>
+</body>
+
+</html>
+  
