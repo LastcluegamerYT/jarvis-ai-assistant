@@ -113,33 +113,40 @@ function handleImageUpload(event) {
         reader.onload = function(e) {
             const base64Image = e.target.result.split(',')[1];
             appendMessage('user', null, e.target.result);
-            extractTextFromImage(base64Image);
+            extractTextFromImage(file);
         };
         reader.readAsDataURL(file);
     }
 }
 
-async function extractTextFromImage(base64Image) {
+async function extractTextFromImage(imageFile) {
     try {
         showTypingIndicator();
 
         const formData = new FormData();
-        formData.append('image', `data:image/png;base64,${base64Image}`);
+        formData.append('image', imageFile);
 
         const response = await fetch('https://api.api-ninjas.com/v1/imagetotext', {
             method: 'POST',
             headers: {
-                'X-Api-Key': OCR_API_KEY,
-                'Content-Type': 'multipart/form-data'
+                'X-Api-Key': OCR_API_KEY
             },
             body: formData,
         });
 
+        if (!response.ok) {
+            throw new Error(`OCR API Error: ${response.statusText}`);
+        }
+
         const result = await response.json();
         const extractedText = result.map(item => item.text).join(' ');
 
-        appendMessage('user', `Image content text: ${extractedText}`);
-        sendExtractedTextToAI(extractedText);
+        if (extractedText) {
+            appendMessage('user', `Image content text: ${extractedText}`);
+            sendExtractedTextToAI(extractedText);
+        } else {
+            appendMessage('bot', "No text found in the image.");
+        }
     } catch (error) {
         console.error('OCR Error:', error);
         appendMessage('bot', "Failed to extract text from the image.");
@@ -182,4 +189,3 @@ function updateTime() {
 
 updateTime();
 setInterval(updateTime, 60000);
-        
