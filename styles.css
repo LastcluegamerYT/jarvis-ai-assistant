@@ -194,3 +194,13 @@ body {
         transform: scale(1);
     }
 }
+.upload-icon {
+    cursor: pointer;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+.upload-icon img {
+    width: 24px;
+    height: 24px;
+}
