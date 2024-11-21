@@ -21,7 +21,7 @@ async function submitQuestion() {
         showTypingIndicator();
 
         try {
-            const response = await fetch('https://prashantytt34.pythonanywhere.com/', {
+            const response = await fetch('https://devtook.pythonanywhere.com/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -156,7 +156,7 @@ async function extractTextFromImage(imageFile) {
 
 async function sendExtractedTextToAI(extractedText) {
     try {
-        const response = await fetch('https://prashantytt34.pythonanywhere.com/', {
+        const response = await fetch('https://devtook.pythonanywhere.com/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
