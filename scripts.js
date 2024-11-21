@@ -3,7 +3,7 @@ const pauseButton = document.getElementById('pause-button');
 let musicPlaying = false;
 let audio = null;
 
-const OCR_API_KEY = 'mP83/0xTuTK+ytjgp2166g==f95yrV3P2KZaWYQg';
+const OCR_API_KEY = 'mP83/0xTuTK+ytjgp2166g==f95yrV3P2KZaWYQg'; // Replace with your actual API key.
 
 function handleKeyPress(event) {
     if (event.key === 'Enter') {
@@ -33,8 +33,8 @@ async function submitQuestion() {
             hideTypingIndicator();
             appendMessage('bot', data.response || "Sorry, I didn't understand that.");
 
-            if (data.musicFile) {
-                playMusic(data.musicFile);
+            if (message.toLowerCase().includes("play music")) {
+                fetchRandomMusic();
             }
         } catch (error) {
             console.error('Error:', error);
@@ -93,6 +93,7 @@ function hideTypingIndicator() {
 function stopMusic() {
     if (audio) {
         audio.pause();
+        audio.currentTime = 0; // Reset audio to the beginning.
         musicPlaying = false;
         pauseButton.style.display = 'none';
     }
@@ -104,13 +105,35 @@ function playMusic(file) {
     audio.play();
     musicPlaying = true;
     pauseButton.style.display = 'block';
+
+    audio.addEventListener('ended', () => {
+        pauseButton.style.display = 'none';
+        musicPlaying = false;
+    });
+}
+
+async function fetchRandomMusic() {
+    try {
+        const response = await fetch('https://devtook.pythonanywhere.com/random-music');
+        const data = await response.json();
+
+        if (data.music_url) {
+            appendMessage('bot', "Playing random music for you...");
+            playMusic(data.music_url);
+        } else {
+            appendMessage('bot', data.error || "No music found.");
+        }
+    } catch (error) {
+        console.error('Music Fetch Error:', error);
+        appendMessage('bot', "Failed to fetch music. Try again later.");
+    }
 }
 
 function handleImageUpload(event) {
     const file = event.target.files[0];
     if (file) {
         const reader = new FileReader();
-        reader.onload = function(e) {
+        reader.onload = function (e) {
             const base64Image = e.target.result.split(',')[1];
             appendMessage('user', null, e.target.result);
             extractTextFromImage(file);
@@ -189,3 +212,5 @@ function updateTime() {
 
 updateTime();
 setInterval(updateTime, 60000);
+
+pauseButton.addEventListener('click', stopMusic);
